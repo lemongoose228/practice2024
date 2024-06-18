@@ -2,6 +2,10 @@
 
 # $1 - date
 
+python3 downloader.py $1
+
+unzip "data/${1}.zip" -d "data/${1}"
+
 for file in data/$1/*
 do
     if [[ "$file" == *"crx.gz"* ]]
