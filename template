@@ -1,0 +1,23 @@
+
+
+[Unit]
+
+Description=publisher service
+
+
+[Service]
+
+ExecStart=/usr/bin/python3 /home/user/practice/publisher.py
+
+Environment=PYTHONUNBUFFERED=1
+
+Restart=on-failure
+
+Type=notify
+
+User=user
+
+
+[Install]
+
+WantedBy=default.target

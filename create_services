@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# $1 - short achive name
+
+sudo touch /etc/systemd/system/pub_$1.service
+
+cat template >> /etc/systemd/system/pub_$1.service
+
+sudo systemctl enable /etc/systemd/system/pub_$1.service
+
+sudo systemctl start pub_$1.service
+

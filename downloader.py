@@ -6,7 +6,7 @@ date = sys.argv[1]
 
 
 link = f"https://api.simurg.space/datafiles/map_files?date={date}"
-file_name = f"data/{date}.zip"
+file_name = f"data/{date[0:4]}/{date[5:]}.zip"
 with open(file_name, "wb") as f:
     print("Downloading %s" % file_name)
     response = requests.get(link, stream=True)
