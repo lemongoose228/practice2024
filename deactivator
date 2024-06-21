@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for file in /etc/systemd/system/pub_*
+do
+
+sudo systemctl stop ${file##/etc/systemd/system/}
+
+done
+
