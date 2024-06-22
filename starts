@@ -2,11 +2,11 @@
 
 # $1 - date
 
-python3 downloader.py $1
+# python3 downloader.py $1
 
-unzip "data/${1:0:4}/${1:5:5}.zip" -d "data/${1:0:4}/${1:5:5}"
+# unzip "data/${1:0:4}/${1:5:5}.zip" -d "data/${1:0:4}/${1:5:5}"
 
-for file in data/$1/*
+for file in data/${1:0:4}/${1:5:5}/*
 do
     if [[ "$file" == *"crx.gz"* ]]
     then
@@ -15,7 +15,6 @@ do
         ./CRX2RNX $buf
 	buf=${buf%%.crx}
 	buf="${buf}.rnx"
-	./create_services ${buf:0:8}
-	break
+	sudo ./create_services $buf
     fi
 done

@@ -2,7 +2,8 @@
 
 # $1 - achive name
 
-buff = ${$1:16:8}
+buff=${1:16:9}
+path=${1:16:38}
 
 if [ ! -f /etc/systemd/system/pub_$buff.service ]; then
 
@@ -10,7 +11,9 @@ if [ ! -f /etc/systemd/system/pub_$buff.service ]; then
 
     sudo cat template >> /etc/systemd/system/pub_$buff.service
 
-    sudo sed "s/\/home\/user\/practice\/publisher\.py/\/home\/user\/practice\/publisher\.py ${buf%%.rnx}\.rnx\/g" /etc/systemd/system/pub_$buff.service
+    correct_path=${1//\//}
+
+    sudo sed -i "s/\/home\/user\/practice\/publisher\.py/\/home\/user\/practice\/publisher\.py \/home\/user\/practice\/data\/${1:5:4}\/${1:10:5}\/${path%%.rnx}\.rnx/g" /etc/systemd/system/pub_$buff.service
 
     sudo systemctl enable /etc/systemd/system/pub_$buff.service
 
