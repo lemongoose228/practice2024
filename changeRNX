@@ -1,0 +1,13 @@
+#!/bin/bash
+
+file="variables.txt"
+
+if grep -q "rnx1" "$file"; then
+    sed -i 's/rnx1/rnx2/g' "$file"
+    echo "rnx1 replaced with rnx2"
+elif grep -q "rnx2" "$file"; then
+    sed -i 's/rnx2/rnx1/g' "$file"
+    echo "rnx2 replaced with rnx1"
+else
+    echo "Neither rnx1 nor rnx2 found in $file"
+fi
