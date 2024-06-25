@@ -15,6 +15,23 @@ do
         ./CRX2RNX $buf
 	buf=${buf%%.crx}
 	buf="${buf}.rnx"
+
+        if grep -q 'rnx1' variables.txt; then
+            mv $buf rnx2/
+        else
+	    if grep -q 'rnx2' variables.txt; then 
+                mv $buf rnx1/
+            else
+		echo "rnx1" >> variables.txt
+                mv $buf rnx1/
+            fi
+	fi
+
+	echo $1 >> variables.txt
+
+        buf="$(basename "$buf")"
 	sudo ./create_services $buf
+
+	break
     fi
 done
