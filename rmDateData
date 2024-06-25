@@ -1,0 +1,12 @@
+date=$(grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' variables.txt)
+
+date_timestamp=$(date -d $date +%s)
+new_date_timestamp=$(($date_timestamp - 86400))
+new_date=$(date -d @$new_date_timestamp +%Y-%m-%d)
+
+# Разделяем дату на год, месяц и день
+year=$(date -d $new_date +%Y)
+month_day=$(date -d $new_date +%m-%d)
+
+# Удаляем папку с соответствующим именем
+rm -r "$year/$month_day"
