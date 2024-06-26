@@ -41,3 +41,29 @@ def get_file_names():
             file_names.append(file_name)
 
     return file_names
+
+
+class Topics(BaseModel):
+    receivers: list[str]
+
+@app.post("/sites/topics")
+async def create_message(message: Topics):
+    response = {}
+    response['receivers'] = []
+
+    for receiver in message.receivers:
+
+        with open('variables.txt', 'r') as file:
+            date = re.search(r'\d{4}-\d{2}-\d{2}', file.read()).group()
+
+        directory = './data/' + date[:4] + '/' + date[5:]
+
+        files_in_directory = os.listdir(directory)
+        matching_files = [file for file in files_in_directory if file.startswith(receiver[:5])]
+
+        if matching_files:
+            response['receivers'].append(f"{receiver}: info/{receiver}")
+        else:
+            print(f"Файла '{receiver}' не существует в папке {directory}")
+
+    return response
