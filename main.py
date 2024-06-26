@@ -80,6 +80,33 @@ def get_file_names():
     return file_names
 
 
+class DateInput(BaseModel):
+    date: str
+
+@app.post("/sites/start")
+async def get_date(date: DateInput):
+    date_pattern = re.compile(r'\d{4}-\d{2}-\d{2}')
+    if not date_pattern.match(date.date):
+        return {"error": "Неверный формат даты. Пожалуйста, используйте формат YYYY-MM-DD."}
+
+    if downloading(date.date, True):
+        return {"result": "Система успешно запущена, подождите некоторое время"}
+
+    count_trying = 0
+    flag = False
+
+    while count_trying < 5:
+        try:
+            flag = downloading(date.date, False)
+            subprocess.check_call(["./starts " + date.date, date.date], shell=True)
+        except Exception as exp:
+            print(exp)
+
+        if not(flag):
+            time.sleep(60)
+            count_trying += 1
+
+
 class Topics(BaseModel):
     receivers: list[str]
 
