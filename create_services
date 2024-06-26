@@ -13,10 +13,20 @@ if [ ! -f /etc/systemd/system/pub_$buff.service ]; then
 
     current_hour=$(date +%H)
     if [ $current_hour -ge 23 ]; then
-        sudo sed -i "s/\/home\/user\/practice\/publisher\.py/\/home\/user\/practice\/publisher\.py ${path%%.rnx}\.rnx wait/g" /etc/systemd/system/pub_$buff.service
+	sudo echo "$buff wait" >> /home/user/practice/pub_statuses.txt
     else
-        sudo sed -i "s/\/home\/user\/practice\/publisher\.py/\/home\/user\/practice\/publisher\.py ${path%%.rnx}\.rnx work/g" /etc/systemd/system/pub_$buff.service
-    fi 
+	sudo echo "$buff work" >> /home/user/practice/pub_statuses.txt
+    fi
+
+    sudo sed -i "s/\/home\/user\/practice\/publisher\.py/\/home\/user\/practice\/publisher\.py ${path%%.rnx}\.rnx/g" /etc/systemd/system/pub_$buff.service
+else
+
+    if [ $current_hour -ge 23 ]; then
+        sed -i "s/^\($buff\) .*/\1 wait/" /home/user/practice/pub_statuses.txt
+    else
+        sed -i "s/^\($buff\) .*/\1 work/" /home/user/practice/pub_statuses.txt
+    fi
+
 fi
 
 sudo systemctl enable /etc/systemd/system/pub_$buff.service

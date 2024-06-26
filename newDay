@@ -3,9 +3,39 @@
 # Читаем дату из файла variables.txt
 date=$(grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' /home/user/practice/variables.txt)
 
-# + 1 день к дате
+# Прибавляем к дате 1 день
 next_date=$(date -d "$date + 1 day" "+%Y-%m-%d")
 
 sed -i "s/$date/$next_date/g" /home/user/practice/variables.txt
 
-./starts $next_date
+
+python3 downloader.py $next_date
+
+unzip "data/${next_date:0:4}/${next_date:5:5}.zip" -d "data/${next_date:0:4}/${next_date:5:5}"
+
+for file in /home/user/practice/data/${next_date:0:4}/${next_date:5:5}/*
+do
+    if [[ "$file" == *"crx.gz"* ]]
+    then
+        gunzip $file
+        buf=${file%%.gz}
+        /home/user/practice/CRX2RNX $buf
+        buf=${buf%%.crx}
+        buf="${buf}.rnx"
+
+        if grep -q 'rnx1' /home/user/practice/variables.txt; then
+            mv $buf /home/user/practice/rnx2/
+        else
+            if grep -q 'rnx2' /home/user/practice/variables.txt; then
+                mv $buf /home/user/practice/rnx1/
+            else
+                echo "rnx1" >> /home/user/practice/variables.txt
+                mv $buf /home/user/practice/rnx1/
+            fi
+        fi
+
+        buf="$(basename "$buf")"
+        sudo /home/user/practice/create_services $buf
+        break
+    fi
+done

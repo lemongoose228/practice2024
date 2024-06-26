@@ -15,6 +15,14 @@ def get_rnx_number():
 
     return rnx_number
 
+def get_status(receiver_name):
+    with open('/home/user/practice/pub_statuses.txt', 'r') as f:
+        status = ''
+        while receiver_name not in status:
+            status = f.readline().strip()
+
+    return status
+
 def broker_setup():
     broker = "broker.emqx.io"
 
@@ -63,6 +71,7 @@ def get_begin_work_time():
 
     return begin_work_time
 
+
 def publishing(fullpath):
     begin_work_time = get_begin_work_time()
 
@@ -85,7 +94,6 @@ def publishing(fullpath):
                         time.sleep(0.1)
                     ready_work = True
                 else:
-
                     continue
 
             if parsing_current_time == state.split()[1]:
@@ -105,22 +113,30 @@ def publishing(fullpath):
             print("message is " + state)
 
 filename = sys.argv[1]
-status = sys.argv[2]
 # filename = "DRAO00CAN_R_20240070000_01D_30S_MO.rnx"
-# status = 'work'
 
-if status == 'wait':
+systemd.daemon.notify('READY=1')
+
+if get_status(filename[0:9]) == 'wait' and datetime.datetime.now() < datetime.datetime.now().replace(hour=23, minute=59, second=21):
     while datetime.datetime.now().strftime("%H:%M:%S") != "23:59:21":
         time.sleep(0.1)
 
-systemd.daemon.notify('READY=1')
+if get_status(filename[0:9]) == 'willstop' and datetime.datetime.now() > datetime.datetime.now().replace(hour=23, minute=59, second=19):
+    exit()
+
+if get_status(filename[0:9]) == 'work' and \
+        datetime.datetime.now() > datetime.datetime.now().replace(hour=23, minute=58, second=58) and \
+        datetime.datetime.now() < datetime.datetime.now().replace(hour=23, minute=59, second=21):
+    while datetime.datetime.now().strftime("%H:%M:%S") != "23:59:30":
+        time.sleep(0.1)
+
+
 client = broker_setup()
 
 fullpath = f"/home/user/practice/{get_rnx_number()}/{filename}"
 
-print(fullpath)
-
 while True:
     publishing(fullpath)
+    if get_status(filename[0:9]) == 'willstop':
+        exit()
     fullpath = f"/home/user/practice/{get_rnx_number()}/{filename}"
-
