@@ -8,33 +8,36 @@ app = FastAPI()
 #class getStreams(BaseModel):
 #    streams: List
 
-class getDate(BaseModel):
+class getListReceivers(BaseModel):
     date: str
 
 
-@app.post("/sites")
-async def getDate(date: getDate):
-    res1 = get_file_names(date.date)
+@app.get("/sites")
+async def getListReceivers():
+    res1 = get_file_names()
     return {"result": res1}
 
 
-#@app.post("/sites/streams")
-#async def streams(data: getStreams):
-#    for name in data:
-#       for file in os.listdir("data/2024/01-02"):
-#            if name in file:
-#                res = subprocess.check_call(["./data_manager", date.date], shell=True)
-#    return {"result": res}
-
-
-def get_file_names(date):
+def get_file_names():
     file_names = []
+
+    with open('variables.txt', 'r') as file:
+        date = re.search(r'\d{4}-\d{2}-\d{2}', file.read()).group()
 
     path = './data/' + date[:4] + '/' + date[5:]
 
+    if not os.path.exists(path):
+        print("Установка ещё не завершена или не была запущена")
+        return file_names
+
     for file in os.listdir(path):
-        if os.path.isfile(os.path.join(path, file)) and not file.endswith('.Z'):
-            file_name = file.split('_')[0]
+        if os.path.isfile(os.path.join(path, file)) and (file.endswith('.Z') or file.endswith('.crx')):
+            if '_' not in file:
+                file_name = file.split('.')[0]
+            else:
+                file_name = file.split('_')[0]
+
+            file_name = file_name.ljust(9, '0')[:9]
             file_names.append(file_name)
 
     return file_names
