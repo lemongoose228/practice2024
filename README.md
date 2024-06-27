@@ -14,24 +14,32 @@
 * Подписка на данные: Пользователи могут подключаться к брокеру и подписаться на определённые топики, чтобы получать потоковую информацию с выбранных станций
 
 ### Установка проекта:
-* Склонируйте репозиторий: `https://github.com/lemongoose228/practice2024.git` и перейдите в папку `practice`
+* Перейдите в папку `practice` и склонируйте репозиторий:  `https://github.com/lemongoose228/practice2024.git`
 ```sh
-git clone https://github.com/lemongoose228/practice2024.git
+mkdir practice
 cd practice
+git clone https://github.com/lemongoose228/practice2024.git
+
 ```
-* Установите зависимости, которые находятся в файле `requirements.txt`
+* Установите pip и зависимости, которые находятся в файле `requirements.txt`
 ```sh
-pip install -r docs/requirements.txt
+sudo apt install python3-pip
+pip install -r ./txt/requirements.txt
 ```
 * Необходимо выдать права на исполнение всем файлам, для этого вам нужно будет дать права на исполнение файлу `issueRights` и запустить его
 ```sh 
 chmod +x issueRights
 ./issueRights
 ```
-
+* Необходимо задать путь к текущей директории
+```sh 
+nano ./txt/mainpath.txt
+Введите туда путь до текущей директории, например /home/user/practice
+```
 ### Запуск проекта:
+* sudo apt install uvicorn
 * Запуск сервера FastAPI: `uvicorn main:app --reload --port 8002 --host 0.0.0.0`
-* Если вы запускаете проект локально, то откройте браузер и перейдите по адресу `http://127.0.0.1:8000/docs`, если вы запускаете его с виртуальной манины Яндекса, то перейдите по адресу `http://IP_вашей_ВМ:8000/docs`
+* Если вы запускаете проект локально, то откройте браузер и перейдите по адресу `http://127.0.0.1:8002/docs`, если вы запускаете его с виртуальной машины Яндекса, то перейдите по адресу `http://IP_вашей_ВМ:8002/docs`
 
 ## Функции FastAPI
 
