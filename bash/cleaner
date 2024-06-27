@@ -1,0 +1,16 @@
+#!/bin/bash
+
+read -r mainpath < /home/user/practice/txt/mainpath.txt
+
+# Очистить rnx1 и rnx2
+rm -rf ${mainpath}/rnx1/*
+rm -rf ${mainpath}/rnx2/*
+
+# Очистить папки в папке data
+find ${mainpath}/data -type f -exec rm -f {} +
+
+# Очистить содержимое файла variables.txt
+> ${mainpath}/txt/variables.txt
+> ${mainpath}/txt/pub_statuses.txt
+
+sudo ${mainpath}/bash/clean_services

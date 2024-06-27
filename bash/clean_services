@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Проходим по всем службам
+for service in $(systemctl list-unit-files | grep '^pub_' | awk '{print $1}'); do
+  # Удаляем службу
+  systemctl disable "$service"
+  systemctl stop "$service"
+  systemctl mask "$service"
+  systemctl reset-failed "$service"
+  # Удаляем файл юнита службы
+  rm -f /etc/systemd/system/"$service"
+done
+
+echo "Все службы, начинающиеся с 'pub_', удалены."

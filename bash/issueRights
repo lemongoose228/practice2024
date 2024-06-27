@@ -1,0 +1,14 @@
+#!/bin/bash
+
+chmod +x ./bash/changeRNX
+chmod +x ./bash/create_services
+chmod +x ./python/downloader.py
+chmod +x ./bash/newDay
+chmod +x ./bash/change
+chmod +x ./bash/starts
+chmod +x ./bash/CRX2RNX
+chmod +x ./python/main.py
+chmod +x ./python/publisher.py
+chmod +x ./bash/rmDateData
+
+echo "Права на исполнение файлов выданы"

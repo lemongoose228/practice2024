@@ -1,0 +1,27 @@
+#!/bin/bash
+
+read -r mainpath < /home/user/practice/txt/mainpath.txt
+
+log_file="$mainpath/logfile.txt"
+
+log() {
+    log_time=$(date +"%Y-%m-%d %H:%M:%S")
+    local level=$1
+    local message=$2
+    echo "$log_time - $level - $message" | tee -a "$log_file"
+}
+
+log "INFO" "Скрипт changeRNX начал работу"
+
+file="$mainpath/txt/variables.txt"
+
+if grep -q "rnx1" "$file"; then
+    sed -i 's/rnx1/rnx2/g' "$file"
+    log "INFO" "rnx1 поменялся на rnx2"
+elif grep -q "rnx2" "$file"; then
+    sed -i 's/rnx2/rnx1/g' "$file"
+    log "INFO" "rnx2 поменялся на rnx1"
+else
+    echo "Neither rnx1 nor rnx2 found in $file"
+    log "ERROR" "Ни rnx1, ни rnx2 не были найдены"
+fi

@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# $1 - archive name
+# $2 - mode
+
+log() {
+    log_time=$(date +"%Y-%m-%d %H:%M:%S")
+    local level=$1
+    local message=$2
+    echo "$log_time - $level - $message" >> "$log_file"
+}
+
+log_file="$mainpath/logfile.txt"
+
+read -r mainpath < /home/user/practice/txt/mainpath.txt
+path=$(basename "$1")
+buff=${path:0:9}
+
+log "INFO" "Скрипт create_services запущен для обработки архива $1 в режиме $2"
+
+if [ ! -f /etc/systemd/system/pub_$buff.service ]; then
+
+    sudo touch /etc/systemd/system/pub_$buff.service
+
+    sudo cat $mainpath/bash/template >> /etc/systemd/system/pub_$buff.service
+
+    current_hour=$(date +%H)
+    if [ $current_hour -ge 23 ]; then
+	sudo echo "$buff wait" >> $mainpath/txt/pub_statuses.txt
+    else
+    	sudo echo "$buff work" >> $mainpath/txt/pub_statuses.txt
+    fi
+
+    sudo sed -i "s/\/home\/user\/practice\/python\/publisher\.py/\/home\/user\/practice\/python\/publisher\.py ${path:0:9}/g" /etc/systemd/system/pub_$buff.service
+
+    sudo systemctl enable /etc/systemd/system/pub_$buff.service
+
+    sudo systemctl start pub_$buff.service
+
+    log "INFO" "Создан и запущен новый сервис pub_$buff.service"
+else
+    if systemctl is-active pub_$buff.service; then
+	if [[ $2 == change ]]; then
+	    sed -i "s/^\($buff\) .*/\1 change/" $mainpath/txt/pub_statuses.txt
+	    log "INFO" "Статус pub_$buff.service поменялся на change"
+	else
+	    sed -i "s/^\($buff\) .*/\1 work/" $mainpath/txt/pub_statuses.txt
+	fi
+    else
+	current_hour=$(date +%H)
+	if [ $current_hour -ge 23 ]; then
+            sed -i "s/^\($buff\) .*/\1 wait/" $mainpath/txt/pub_statuses.txt
+	    log "INFO" "Статус pub_$buff.service поменялся на wait"
+	fi
+	sudo systemctl start pub_$buff.service
+	log "INFO" "Запущен pub_$buff.service"
+    fi
+fi
