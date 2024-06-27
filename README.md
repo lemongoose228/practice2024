@@ -19,6 +19,14 @@
 
 ![image](https://github.com/lemongoose228/practice2024/assets/71438030/19e64010-81b8-45b9-9b9b-4e181c9546ac)
 
+#### Схема запусков заданий crontab:
+
+![image](https://github.com/lemongoose228/practice2024/assets/71438030/c2bc6588-4481-4e5d-ae2a-b90cfac5efcd)
+
+#### Прочие запросы FastAPI:
+
+![image](https://github.com/lemongoose228/practice2024/assets/71438030/ee478de9-309e-419a-a360-e508467dd185)
+
 
 ### Установка проекта:
 * Перейдите в папку `practice` и склонируйте репозиторий:  `https://github.com/lemongoose228/practice2024.git`
@@ -145,6 +153,7 @@ nano ./txt/mainpath.txt
 
 ## Описание сценариев
 
+![image](https://github.com/lemongoose228/practice2024/assets/71438030/aa61d41b-8f58-4b1f-80be-f8fd08f55b94)
 
 1. Start: передаётся дата, потом данные разархивируются и для этих данных запускаются сервисы(демоны), после чего для них запускаются паблишеры 
 2. Sites: из файла variables.txt берётся дата, потом с помощью скрипта мы получаем список приёмников на эту дату
