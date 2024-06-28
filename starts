@@ -1,0 +1,51 @@
+#!/bin/bash
+
+
+# $1 - date
+
+read -r mainpath < /home/user/practice/txt/mainpath.txt
+
+log_file="$mainpath/logfile.txt"
+
+log() {
+    log_time=$(date +"%Y-%m-%d %H:%M:%S")
+    local level=$1
+    local message=$2
+    echo "$log_time - $level - $message" | tee -a "$log_file"
+}
+
+log "INFO" "Скрипт starts начал работу"
+
+python3 ../python/downloader.py $1
+log "INFO" "Скачан архив с данными на дату $next_date"
+
+unzip "$mainpath/data/${1:0:4}/${1:5:5}.zip" -d "$mainpath/data/${1:0:4}/${1:5:5}"
+log "INFO" "Разархивирована папка с данными на дату $next_date"
+
+echo $1 >> $mainpath/txt/variables.txt
+log "INFO" "Записана дата $1 в файл variables.txt"
+echo "rnx1" >> $mainpath/txt/variables.txt
+log "INFO" "Записан rnx1 в файл variables.txt"
+
+$mainpath/bash/makecrontask
+log "INFO" "Задачи добавлены в cron"
+
+for file in $mainpath/data/${1:0:4}/${1:5:5}/*
+do
+    if [[ "$file" == *"crx.gz"* ]]
+    then
+        gunzip $file
+	log "INFO" "Разархивирован файл $file"
+	buf=${file%%.gz}
+        $mainpath/bash/CRX2RNX $buf
+	log "INFO" "Переведен в формат rnx файл $buf"
+	buf=${buf%%.crx}
+	buf="${buf}.rnx"
+
+        mv $buf $mainpath/rnx1/
+	log "INFO" "Файл $buf перенесен в папку rnx1"
+
+        buf="$(basename "$buf")"
+	sudo $mainpath/bash/create_services $buf "first"
+    fi
+done
