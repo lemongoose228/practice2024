@@ -1,0 +1,13 @@
+#!/bin/bash
+
+read -r mainpath < /home/user/practice/txt/mainpath.txt
+
+crontab -l > crontab_new
+
+crontab -l | grep -v "$mainpath/bash/newDay" | \
+  grep -v "$mainpath/bash/changeRNX" | \
+  grep -v "$mainpath/bash/rmDateDATA" > crontab_new
+
+crontab crontab_new
+
+rm crontab_new

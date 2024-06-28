@@ -1,0 +1,14 @@
+#!/bin/bash
+
+read -r mainpath < /home/user/practice/txt/mainpath.txt
+
+crontab -l > crontab_new 
+
+echo "0 23 * * * $mainpath/bash/newDay" >> crontab_new
+echo "59 23 * * * $mainpath/bash/changeRNX" >> crontab_new
+echo "1 00 * * * $mainpath/bash/rmDateDATA" >> crontab_new
+
+crontab crontab_new
+
+rm crontab_new
+
